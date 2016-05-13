@@ -1,2 +1,2 @@
 # VarClump
-Variationañ Methods on Clump Identification
+Variational Methods on Clump Identification
