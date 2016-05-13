@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      9067,        308]
-NotebookOptionsPosition[      8228,        271]
-NotebookOutlinePosition[      8562,        286]
-CellTagsIndexPosition[      8519,        283]
+NotebookDataLength[      9223,        310]
+NotebookOptionsPosition[      8384,        273]
+NotebookOutlinePosition[      8718,        288]
+CellTagsIndexPosition[      8675,        285]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -78,48 +78,49 @@ Cell[BoxData[{
        RowBox[{"f", "[", "x", "]"}]}], "]"}]}], " ", "+", " ", 
     RowBox[{"b", " ", 
      RowBox[{"\[CapitalPhi]", "[", 
-      RowBox[{
-       RowBox[{"Sqrt", "[", "x2", "]"}], "^", "2"}], "]"}]}]}]}], ";"}], "\n", 
+      RowBox[{"Sqrt", "[", 
+       RowBox[{"x2", "^", "2"}], "]"}], "]"}]}]}]}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"Lreal", "[", "x_", "]"}], "=", 
+  RowBox[{"L", "[", "x_", "]"}], "=", 
   RowBox[{
    RowBox[{
-    RowBox[{"L", "[", 
+    RowBox[{"Lag", "[", 
      RowBox[{"x1", ",", "x2"}], "]"}], "/.", 
     RowBox[{"x1", "\[Rule]", 
-     RowBox[{"g", "[", "x", "]"}]}]}], "/.", 
+     RowBox[{"u", "[", "x", "]"}]}]}], "/.", 
    RowBox[{"x2", "\[Rule]", 
     RowBox[{
-     RowBox[{"g", "'"}], "[", "x", "]"}]}]}]}], "\n", 
+     RowBox[{"u", "'"}], "[", "x", "]"}]}]}]}], "\n", 
  RowBox[{
-  RowBox[{"Lg", "[", "x_", "]"}], "=", 
+  RowBox[{"Lu", "[", "x_", "]"}], "=", 
   RowBox[{
    RowBox[{
-    RowBox[{"D", "[", 
-     RowBox[{
-      RowBox[{"L", "[", 
-       RowBox[{"x1", ",", "x2"}], "]"}], ",", "x1"}], "]"}], "/.", 
+    RowBox[{
+     SubscriptBox["\[PartialD]", "x1"], 
+     RowBox[{"Lag", "[", 
+      RowBox[{"x1", ",", "x2"}], "]"}]}], "/.", 
     RowBox[{"x1", "\[Rule]", 
-     RowBox[{"g", "[", "x", "]"}]}]}], "/.", 
+     RowBox[{"u", "[", "x", "]"}]}]}], "/.", 
    RowBox[{"x2", "\[Rule]", 
     RowBox[{
-     RowBox[{"g", "'"}], "[", "x", "]"}]}]}]}], "\n", 
+     RowBox[{"u", "'"}], "[", "x", "]"}]}]}]}], "\n", 
  RowBox[{
-  RowBox[{"Lgx", "[", "x_", "]"}], "=", 
+  RowBox[{"Lux", "[", "x_", "]"}], "=", 
   RowBox[{
    RowBox[{
-    RowBox[{"D", "[", 
-     RowBox[{
-      RowBox[{"L", "[", 
-       RowBox[{"x1", ",", "x2"}], "]"}], ",", "x2"}], "]"}], "/.", 
+    RowBox[{
+     SubscriptBox["\[PartialD]", "x2"], 
+     RowBox[{"Lag", "[", 
+      RowBox[{"x1", ",", "x2"}], "]"}]}], "/.", 
     RowBox[{"x1", "\[Rule]", 
-     RowBox[{"g", "[", "x", "]"}]}]}], "/.", 
+     RowBox[{"u", "[", "x", "]"}]}]}], "/.", 
    RowBox[{"x2", "\[Rule]", 
     RowBox[{
-     RowBox[{"g", "'"}], "[", "x", "]"}]}]}]}]}], "Input",
+     RowBox[{"u", "'"}], "[", "x", "]"}]}]}]}]}], "Input",
  CellChangeTimes->{{3.672092334323059*^9, 3.672092334771688*^9}, {
   3.672093022224512*^9, 3.672093038276476*^9}, {3.672093098488269*^9, 
-  3.67209311767745*^9}},
+  3.67209311767745*^9}, {3.672093285343831*^9, 3.672093418325783*^9}, {
+  3.672093512166643*^9, 3.672093514321165*^9}},
  CellID->1],
 
 Cell[BoxData[
@@ -129,20 +130,21 @@ Cell[BoxData[
     RowBox[{
      RowBox[{"-", 
       RowBox[{"f", "[", "x", "]"}]}], "+", 
-     RowBox[{"g", "[", "x", "]"}]}], ")"}], "2"], "+", 
+     RowBox[{"u", "[", "x", "]"}]}], ")"}], "2"], "+", 
   RowBox[{"b", " ", 
    RowBox[{"\[CapitalPhi]", "[", 
-    SuperscriptBox[
-     RowBox[{
-      SuperscriptBox["g", "\[Prime]",
-       MultilineFunction->None], "[", "x", "]"}], "2"], "]"}]}], "+", 
+    RowBox[{
+     SuperscriptBox["u", "\[Prime]",
+      MultilineFunction->None], "[", "x", "]"}], "]"}]}], "+", 
   RowBox[{"a", " ", 
    RowBox[{"\[CapitalPsi]", "[", 
     RowBox[{
      RowBox[{"-", 
       RowBox[{"f", "[", "x", "]"}]}], "+", 
-     RowBox[{"g", "[", "x", "]"}]}], "]"}]}]}]], "Output",
- CellChangeTimes->{3.672093118259178*^9}],
+     RowBox[{"u", "[", "x", "]"}]}], "]"}]}]}]], "Output",
+ CellChangeTimes->{
+  3.672093118259178*^9, {3.6720932950208607`*^9, 3.672093314161593*^9}, 
+   3.672093419302595*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -151,7 +153,7 @@ Cell[BoxData[
     RowBox[{
      RowBox[{"-", 
       RowBox[{"f", "[", "x", "]"}]}], "+", 
-     RowBox[{"g", "[", "x", "]"}]}], ")"}]}], "+", 
+     RowBox[{"u", "[", "x", "]"}]}], ")"}]}], "+", 
   RowBox[{"a", " ", 
    RowBox[{
     SuperscriptBox["\[CapitalPsi]", "\[Prime]",
@@ -159,22 +161,22 @@ Cell[BoxData[
     RowBox[{
      RowBox[{"-", 
       RowBox[{"f", "[", "x", "]"}]}], "+", 
-     RowBox[{"g", "[", "x", "]"}]}], "]"}]}]}]], "Output",
- CellChangeTimes->{3.672093118259831*^9}],
+     RowBox[{"u", "[", "x", "]"}]}], "]"}]}]}]], "Output",
+ CellChangeTimes->{
+  3.672093118259178*^9, {3.6720932950208607`*^9, 3.672093314161593*^9}, 
+   3.672093419303465*^9}],
 
 Cell[BoxData[
- RowBox[{"2", " ", "b", " ", 
-  RowBox[{
-   SuperscriptBox["g", "\[Prime]",
-    MultilineFunction->None], "[", "x", "]"}], " ", 
+ RowBox[{"b", " ", 
   RowBox[{
    SuperscriptBox["\[CapitalPhi]", "\[Prime]",
     MultilineFunction->None], "[", 
-   SuperscriptBox[
-    RowBox[{
-     SuperscriptBox["g", "\[Prime]",
-      MultilineFunction->None], "[", "x", "]"}], "2"], "]"}]}]], "Output",
- CellChangeTimes->{3.672093118260755*^9}]
+   RowBox[{
+    SuperscriptBox["u", "\[Prime]",
+     MultilineFunction->None], "[", "x", "]"}], "]"}]}]], "Output",
+ CellChangeTimes->{
+  3.672093118259178*^9, {3.6720932950208607`*^9, 3.672093314161593*^9}, 
+   3.672093419304131*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -288,31 +290,29 @@ Notebook[{
 Cell[CellGroupData[{
 Cell[580, 22, 1429, 35, 148, "Title"],
 Cell[CellGroupData[{
-Cell[2034, 61, 1908, 61, 121, "Input",
+Cell[2034, 61, 1999, 62, 121, "Input",
  CellID->1],
-Cell[3945, 124, 620, 20, 37, "Output"],
-Cell[4568, 146, 484, 16, 32, "Output"],
-Cell[5055, 164, 422, 12, 94, "Output"]
+Cell[4036, 125, 668, 21, 34, "Output"],
+Cell[4707, 148, 561, 18, 32, "Output"],
+Cell[5271, 168, 362, 10, 32, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[5514, 181, 348, 10, 32, "Input",
+Cell[5670, 183, 348, 10, 32, "Input",
  CellID->24],
-Cell[5865, 193, 687, 13, 23, "Message"]
+Cell[6021, 195, 687, 13, 23, "Message"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[6589, 211, 364, 7, 77, "Input",
+Cell[6745, 213, 364, 7, 77, "Input",
  CellID->37],
-Cell[6956, 220, 287, 10, 49, "Output",
+Cell[7112, 222, 287, 10, 49, "Output",
  CellID->56],
-Cell[7246, 232, 428, 15, 69, "Output",
+Cell[7402, 234, 428, 15, 69, "Output",
  CellID->58],
-Cell[7677, 249, 523, 18, 72, "Output",
+Cell[7833, 251, 523, 18, 72, "Output",
  CellID->59]
 }, Open  ]]
 }, Open  ]]
 }
 ]
 *)
-
-(* End of internal cache information *)
 
