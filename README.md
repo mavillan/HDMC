@@ -1,2 +1,3 @@
-# HDSources
-Hierarchical Decomposition of Sources Algorithm
+# HDMC
+Hierarchical Decomposition of Molecular Clouds
+
