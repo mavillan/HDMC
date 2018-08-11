@@ -7,6 +7,7 @@ from utils3D import u_eval as u_eval3D
 from utils3D import compute_solution
 from gmr import isd_diss_full
 from points_generation import _boundary_map
+import astropy.units as units
 
 
 font = {'fontname':'Times New Roman'}
@@ -190,7 +191,7 @@ def residual_plot(residual_variance, residual_entropy, residual_rms, iter_list):
 
 
     
-def points_plot(data, points_positions=None, colors=None, labels=[], title=None, save_path=None):
+def points_plot(data, points=None, color="blue", title=None, save_path=None):
     """
     Function to properly plot gaussian centers in the data.
 
@@ -204,10 +205,9 @@ def points_plot(data, points_positions=None, colors=None, labels=[], title=None,
     y_scale = data.shape[1]-1
     plt.figure(figsize=(10,10))
     plt.imshow(data, cmap=plt.cm.gray_r)
-    for i,points in enumerate(points_positions):
-        plt.scatter(points[:,1]*y_scale, points[:,0]*x_scale, s=35, 
-            facecolor=colors[i], lw=0, label=labels[i])
-        plt.legend(loc=4, prop={'size': 20})  
+    plt.scatter(points[:,1]*y_scale, points[:,0]*x_scale, s=35, 
+            facecolor=color, lw=0)
+    #plt.legend(loc=4, prop={'size': 20})  
     plt.grid()
     plt.tick_params(axis='both', which='major', labelsize=1)
     if title is not None: plt.title(title) 
@@ -400,7 +400,8 @@ def comparative_slices_plot(data1, data2, slc):
     plt.show()
 
 
-def components_plot3D(elm, components_list, n_levels=1, save_path=None):
+def components_plot3D(elm, components_list, n_levels=1, save_path=None,
+                      cmap=plt.cm.gray_r, wcs=None, unit=None, spec=None):
     # get all the (mapped) parameters
     xc, yc, zc, c, sig = elm.get_params_mapped()
 
@@ -416,27 +417,36 @@ def components_plot3D(elm, components_list, n_levels=1, save_path=None):
     color = plt.cm.rainbow(np.linspace(0., 1., n_comp))
 
     for axis in range(3):
-        if axis==0: plt.figure(figsize=(8,8))
-        elif axis==1: plt.figure(figsize=(8,4))
-        elif axis==2: plt.figure(figsize=(4,8))
-        ax = plt.subplot(1,1,1)
+        if axis==0: fig = plt.figure(figsize=(8,8))
+        elif axis==1: fig = plt.figure(figsize=(8,4))
+        elif axis==2: fig = plt.figure(figsize=(4,8))
+
+        if wcs is not None:
+            if axis==0:
+                ax = plt.subplot(111, projection=wcs, slices=("x", "y", 0))
+                ax.set_xlabel("RA (J2000)", fontsize=13)
+                ax.set_ylabel("Dec (J2000)", fontsize=13)
+            elif axis==1:
+                ax = plt.subplot(111, projection=wcs, slices=("x",0,"y"))
+                ax.set_xlabel("RA (J2000)", fontsize=13)
+                ax.set_ylabel("FREQ [GHz]", fontsize=13)
+            elif axis==2:
+                ax = plt.subplot(111, projection=wcs, slices=(0,"y","x"))
+                ax.set_xlabel("FREQ [GHz]", fontsize=13)
+                ax.set_ylabel("Dec (J2000)", fontsize=13)
+                ax.yaxis.tick_right()
+                ax.yaxis.set_label_position("right")
+            ax.coords[2].set_major_formatter('x.x')
+            ax.coords[2].set_format_unit(units.GHz)
+        else: ax = plt.subplot(111)
 
         # stacked data, mapping to [0,1] and display
         _data = elm.data.sum(axis=axis)
         if axis==2: _data = _data.T
         dmin = _data.min(); dmax = _data.max()
         _data -= dmin; _data /= dmax
-        ax.imshow(_data, cmap=plt.cm.gray_r, aspect='auto')
-        if axis==0:       
-            plt.xlabel("RA", fontsize=20); plt.ylabel("DEC", fontsize=20)  
-        elif axis==1:
-            plt.xlabel("RA", fontsize=20); plt.ylabel("FREQ", fontsize=20)
-        elif axis==2:
-            plt.xlabel("FREQ", fontsize=20); plt.ylabel("DEC", fontsize=20)
-            ax.yaxis.set_label_position("right")
-            ax.yaxis.tick_right()
-        ax.tick_params(axis='both', which='major', labelsize=15)
-        ax.grid()
+        ax.imshow(_data, cmap=cmap)
+        #ax.tick_params(axis='both', which='major', labelsize=13)
 
         # contours configuration
         minval = ((elm.base_level*elm.dims[axis]) - dmin) / dmax
@@ -452,7 +462,9 @@ def components_plot3D(elm, components_list, n_levels=1, save_path=None):
             _u = u.reshape(len_xe, len_ye, len_ze).sum(axis=axis)
             if axis==2: _u = _u.T
             _u -= dmin; _u /= dmax
-            ax.contour(_u, levels=levels, colors=[color[i]], linewidths=4)
+            cs = ax.contour(_u, levels=levels, colors=[color[i]], linewidths=4)
+            ax.clabel(cs, cs.levels, inline=True, fmt="S{0}".format(i+1), 
+                      fontsize=13)
         if save_path is not None:
             plt.savefig(save_path+"_{0}C_A{1}.eps".format(n_comp, axis), format='eps', dpi=150, bbox_inches='tight')
         plt.show()
@@ -471,15 +483,20 @@ def components_plot3D(elm, components_list, n_levels=1, save_path=None):
         #_u -= dmin; _u /= dmax
         f = u.sum(axis=(1,2))
         f /= total_flux
-        plt.plot(f, '--', lw=4, color=color[i], ms=6)
-    plt.xlabel("FREQ", fontsize=20)
-    plt.ylabel("Standardized flux", fontsize=20)
+        if spec is not None:
+            plt.plot(spec, f, '--', lw=4, color=color[i], ms=6)
+            plt.text(spec[np.argmax(f)], np.max(f), "S{0}".format(i+1), color=color[i], fontsize=15)
+            ax = plt.gca()
+            ax.locator_params(nbins=5, axis='x')
+        else:
+            plt.plot(f, '--', lw=4, color=color[i], ms=6)
+    plt.xlabel("FREQ [GHz]", fontsize=13)
+    plt.ylabel("Standardised flux", fontsize=13)
     plt.tick_params(axis='both', which='major', labelsize=15)
     plt.grid()   
     if save_path is not None:
         plt.savefig(save_path+"_{0}C_freq.eps".format(n_comp), format='eps', dpi=150, bbox_inches='tight')
     plt.show()
-
 
 def components_plot3D_(elm, components_dict, n_comp):
     # get all the (mapped) parameters
@@ -564,7 +581,7 @@ def _stat_plot(x_var, r_stats, stat, x_label='', loglog=False, n=5, slope=None, 
     plt.show()
 
 
-def stat_plots(x_var, y_list, labels, xlabel=None, ylabel=None, save_name=None, legend=False):
+def stat_plots(x_var, y_list, labels, xlabel=None, ylabel=None, save_name=None, legend=False, markers=None):
     """
     Function to plot a single residual stat for multiple images
     """
@@ -574,7 +591,7 @@ def stat_plots(x_var, y_list, labels, xlabel=None, ylabel=None, save_name=None, 
     np.random.shuffle(colors)
     colors = colors[0:len(y_list)]
     for i,y_var in enumerate(y_list):
-        plt.plot(x_var, y_var, c=colors[i], marker='o', label=labels[i])
+        plt.plot(x_var, y_var, c=colors[i], label=labels[i], marker=markers[i], linestyle="dashed", markersize=8.)
     if xlabel is not None: plt.xlabel(xlabel, fontsize=20)
     if ylabel is not None: plt.ylabel(ylabel, fontsize=20)
     plt.grid()
@@ -586,7 +603,7 @@ def stat_plots(x_var, y_list, labels, xlabel=None, ylabel=None, save_name=None, 
     plt.show()
 
 
-def stat_plots_log(x_var, y_list, labels, xlabel=None, ylabel=None, save_name=None, legend=False):
+def stat_plots_log(x_var, y_list, labels, xlabel=None, ylabel=None, save_name=None, legend=False, markers=None):
     """
     Function to plot a single residual stat for multiple images
     """
@@ -597,7 +614,7 @@ def stat_plots_log(x_var, y_list, labels, xlabel=None, ylabel=None, save_name=No
     colors = colors[0:len(y_list)]
     plt.subplot(1,2,1)
     for i,y_var in enumerate(y_list):
-        plt.plot(x_var, y_var, c=colors[i], marker='o', label=labels[i])
+        plt.plot(x_var, y_var, c=colors[i], label=labels[i], marker=markers[i], linestyle="dashed", markersize=8.)
     if xlabel is not None: plt.xlabel(xlabel, fontsize=20)
     if ylabel is not None: plt.ylabel(ylabel, fontsize=20)
     plt.grid()
@@ -607,7 +624,7 @@ def stat_plots_log(x_var, y_list, labels, xlabel=None, ylabel=None, save_name=No
 
     plt.subplot(1,2,2)
     for i,y_var in enumerate(y_list):
-        plt.loglog(x_var, y_var, c=colors[i], marker='o', label=labels[i])
+        plt.loglog(x_var, y_var, c=colors[i], label=labels[i], marker=markers[i], linestyle="dashed", markersize=8.)
     y_ref = 0.01 * x_var**2
     plt.loglog(x_var, y_ref, c='red')
     if xlabel is not None: plt.xlabel(xlabel, fontsize=20)
